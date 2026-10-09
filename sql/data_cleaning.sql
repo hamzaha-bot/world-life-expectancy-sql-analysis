@@ -67,13 +67,12 @@ WHERE Status = 'Developing';
 
 
 -- Fill missing Developing status values
-UPDATE world_life_expectancy
-SET Status = 'Developing'
-WHERE Country IN (
-    SELECT DISTINCT Country
-    FROM world_life_expectancy
-    WHERE Status = 'Developing'
-);
+UPDATE world_life_expectancy t1
+JOIN world_life_expectancy t2
+    ON t1.Country = t2.Country
+SET t1.Status = 'Developing'
+WHERE (t1.Status = '' OR t1.Status IS NULL)
+  AND t2.Status = 'Developing';
 
 
 -- Fill missing Developed status values
@@ -81,8 +80,7 @@ UPDATE world_life_expectancy t1
 JOIN world_life_expectancy t2
     ON t1.Country = t2.Country
 SET t1.Status = 'Developed'
-WHERE t1.Status = ''
-  AND t2.Status <> ''
+WHERE (t1.Status = '' OR t1.Status IS NULL)
   AND t2.Status = 'Developed';
 
 
